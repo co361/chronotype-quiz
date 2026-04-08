@@ -1,0 +1,363 @@
+import { useState } from “react”;
+
+const questions = [
+{
+id: 1,
+text: “Q1. 만약 하루 일정을 완전히 자유롭게 계획할 수 있다면, 몇 시에 일어나겠습니까?”,
+options: [
+{ label: “오전 5:00 ~ 6:30”, score: 5 },
+{ label: “오전 6:30 ~ 7:45”, score: 4 },
+{ label: “오전 7:45 ~ 9:45”, score: 3 },
+{ label: “오전 9:45 ~ 11:00”, score: 2 },
+{ label: “오전 11:00 ~ 정오”, score: 1 },
+],
+},
+{
+id: 2,
+text: “Q2. 저녁 일정을 완전히 자유롭게 계획할 수 있다면, 몇 시에 잠자리에 들겠습니까?”,
+options: [
+{ label: “오후 8:00 ~ 9:00”, score: 5 },
+{ label: “오후 9:00 ~ 10:15”, score: 4 },
+{ label: “오후 10:15 ~ 자정 12:30”, score: 3 },
+{ label: “자정 12:30 ~ 오전 1:45”, score: 2 },
+{ label: “오전 1:45 ~ 3:00”, score: 1 },
+],
+},
+{
+id: 3,
+text: “Q3. 아침에 특정 시간에 일어나야 할 때, 알람에 얼마나 의존합니까?”,
+options: [
+{ label: “전혀 의존하지 않는다”, score: 4 },
+{ label: “가끔 의존한다”, score: 3 },
+{ label: “꽤 많이 의존한다”, score: 2 },
+{ label: “매우 많이 의존한다”, score: 1 },
+],
+},
+{
+id: 4,
+text: “Q4. 아침에 일어나는 것이 얼마나 쉽습니까? (예상치 못한 상황 제외)”,
+options: [
+{ label: “전혀 쉽지 않다”, score: 1 },
+{ label: “별로 쉽지 않다”, score: 2 },
+{ label: “꽤 쉬운 편이다”, score: 3 },
+{ label: “매우 쉽다”, score: 4 },
+],
+},
+{
+id: 5,
+text: “Q5. 기상 후 첫 30분 동안 얼마나 정신이 맑습니까?”,
+options: [
+{ label: “전혀 맑지 않다”, score: 1 },
+{ label: “별로 맑지 않다”, score: 2 },
+{ label: “꽤 맑은 편이다”, score: 3 },
+{ label: “매우 맑다”, score: 4 },
+],
+},
+{
+id: 6,
+text: “Q6. 기상 후 첫 30분 동안 얼마나 식욕이 있습니까?”,
+options: [
+{ label: “전혀 없다”, score: 1 },
+{ label: “별로 없다”, score: 2 },
+{ label: “꽤 있는 편이다”, score: 3 },
+{ label: “매우 있다”, score: 4 },
+],
+},
+{
+id: 7,
+text: “Q7. 기상 후 첫 30분 동안 얼마나 피곤함을 느낍니까?”,
+options: [
+{ label: “매우 피곤하다”, score: 1 },
+{ label: “꽤 피곤한 편이다”, score: 2 },
+{ label: “별로 피곤하지 않다”, score: 3 },
+{ label: “전혀 피곤하지 않다”, score: 4 },
+],
+},
+{
+id: 8,
+text: “Q8. 다음 날 특별한 약속이 없을 때, 평소보다 몇 시간 늦게 잠자리에 드는 편입니까?”,
+options: [
+{ label: “거의 늦지 않거나 1시간 미만”, score: 4 },
+{ label: “1~2시간 늦게”, score: 3 },
+{ label: “2~3시간 늦게”, score: 2 },
+{ label: “3시간 이상 늦게”, score: 1 },
+],
+},
+{
+id: 9,
+text: “Q9. 아침 운동을 주 2회, 오전 7:00~8:00에 1시간 하기로 결심했습니다. 이 시간이 당신에게 어떻겠습니까?”,
+options: [
+{ label: “좋은 컨디션으로 할 수 있다”, score: 4 },
+{ label: “그럭저럭 할 수 있다”, score: 3 },
+{ label: “힘들 것이다”, score: 2 },
+{ label: “매우 힘들 것이다”, score: 1 },
+],
+},
+{
+id: 10,
+text: “Q10. 저녁에 몇 시쯤 피곤해지기 시작하여 잠이 필요하다고 느낍니까?”,
+options: [
+{ label: “오후 8:00 ~ 9:00”, score: 5 },
+{ label: “오후 9:00 ~ 10:15”, score: 4 },
+{ label: “오후 10:15 ~ 자정 12:30”, score: 3 },
+{ label: “자정 12:30 ~ 오전 1:45”, score: 2 },
+{ label: “오전 1:45 ~ 3:00”, score: 1 },
+],
+},
+{
+id: 11,
+text: “Q11. 최상의 컨디션에 도달하는 데 기상 후 얼마나 걸립니까?”,
+options: [
+{ label: “0~10분”, score: 4 },
+{ label: “11~20분”, score: 3 },
+{ label: “21~40분”, score: 2 },
+{ label: “41분 이상”, score: 1 },
+],
+},
+{
+id: 12,
+text: “Q12. 밤 11시에 잠자리에 든다면 얼마나 피곤할 것 같습니까?”,
+options: [
+{ label: “전혀 피곤하지 않다”, score: 1 },
+{ label: “약간 피곤하다”, score: 2 },
+{ label: “꽤 피곤하다”, score: 3 },
+{ label: “매우 피곤하다”, score: 4 },
+],
+},
+{
+id: 13,
+text: “Q13. 어떤 이유로 평소보다 몇 시간 일찍 일어나야 했지만 다음 날 특별한 일정이 없다면, 어떻게 하겠습니까?”,
+options: [
+{ label: “나머지 시간을 그냥 깨어 있는다”, score: 4 },
+{ label: “다시 잠들려 하지만 나머지 시간은 일어난다”, score: 3 },
+{ label: “다시 잠들려 하고 두 번 더 잔다”, score: 2 },
+{ label: “정해진 시간까지 다시 잠든다”, score: 1 },
+],
+},
+{
+id: 14,
+text: “Q14. 밤샘 근무(오전 4:00~6:00)를 해야 하고, 다음 날 특별한 일정이 없다면 어떻게 하겠습니까?”,
+options: [
+{ label: “근무 전에 전혀 자지 않는다”, score: 4 },
+{ label: “근무 전에 조금 잔다”, score: 3 },
+{ label: “근무 전에 충분히 잔다”, score: 2 },
+{ label: “근무 당일 낮까지 잔다”, score: 1 },
+],
+},
+{
+id: 15,
+text: “Q15. 힘든 육체적 작업을 2시간 해야 한다면, 다음 중 어느 시간대가 가장 적합합니까?”,
+options: [
+{ label: “오전 8:00 ~ 10:00”, score: 4 },
+{ label: “오전 11:00 ~ 오후 1:00”, score: 3 },
+{ label: “오후 3:00 ~ 5:00”, score: 2 },
+{ label: “오후 7:00 ~ 9:00”, score: 1 },
+],
+},
+{
+id: 16,
+text: “Q16. 오전 10시에 중요한 시험이 있다면, 최상의 컨디션을 위해 몇 시에 일어나겠습니까?”,
+options: [
+{ label: “오전 8:00 이전”, score: 4 },
+{ label: “오전 8:00 ~ 9:00”, score: 3 },
+{ label: “오전 9:00 ~ 9:30”, score: 2 },
+{ label: “오전 9:30 이후”, score: 1 },
+],
+},
+{
+id: 17,
+text: “Q17. 하루 5시간 근무 시간을 자유롭게 선택할 수 있다면 언제 시작하겠습니까? (성과 기반 급여 조건)”,
+options: [
+{ label: “오전 4:00 ~ 8:00”, score: 5 },
+{ label: “오전 8:00 ~ 9:00”, score: 4 },
+{ label: “오전 9:00 ~ 오후 2:00”, score: 3 },
+{ label: “오후 2:00 ~ 5:00”, score: 2 },
+{ label: “오후 5:00 ~ 오전 4:00”, score: 1 },
+],
+},
+{
+id: 18,
+text: “Q18. 하루 중 컨디션이 가장 좋은 시간은 언제입니까?”,
+options: [
+{ label: “오전 5:00 ~ 8:00”, score: 5 },
+{ label: “오전 8:00 ~ 10:00”, score: 4 },
+{ label: “오전 10:00 ~ 오후 5:00”, score: 3 },
+{ label: “오후 5:00 ~ 10:00”, score: 2 },
+{ label: “오후 10:00 ~ 오전 5:00”, score: 1 },
+],
+},
+{
+id: 19,
+text: “Q19. 나는 스스로를 어떤 유형이라고 생각합니까?”,
+options: [
+{ label: “확실한 아침형”, score: 6 },
+{ label: “어느 정도 아침형”, score: 4 },
+{ label: “어느 정도 저녁형”, score: 2 },
+{ label: “확실한 저녁형”, score: 0 },
+],
+},
+];
+
+const getResult = (score) => {
+if (score >= 70) return { type: “확실한 아침형”, emoji: “🌅”, color: “#f97316”, desc: “매우 이른 시간에 활동력이 최고조에 달하는 유형입니다. 이른 기상과 일찍 잠드는 패턴이 자연스럽습니다.”, range: “70~86” };
+if (score >= 59) return { type: “보통 아침형”, emoji: “🌤️”, color: “#eab308”, desc: “아침 시간대에 활동성이 높은 유형입니다. 오전 중에 중요한 업무나 학습을 배치하면 효율적입니다.”, range: “59~69” };
+if (score >= 42) return { type: “중간형”, emoji: “⛅”, color: “#22c55e”, desc: “아침형과 저녁형의 중간으로, 비교적 유연한 수면·각성 패턴을 가집니다. 대부분의 사람이 이 범주에 속합니다.”, range: “42~58” };
+if (score >= 31) return { type: “보통 저녁형”, emoji: “🌆”, color: “#3b82f6”, desc: “저녁 시간대에 활동력이 높아지는 유형입니다. 오후~저녁에 집중력이 최고조에 달합니다.”, range: “31~41” };
+return { type: “확실한 저녁형”, emoji: “🌙”, color: “#8b5cf6”, desc: “늦은 밤에 가장 활동적인 유형입니다. 이른 아침 활동은 매우 힘들 수 있으며, 늦은 취침·기상 패턴이 자연스럽습니다.”, range: “16~30” };
+};
+
+export default function MEQQuiz() {
+const [answers, setAnswers] = useState({});
+const [submitted, setSubmitted] = useState(false);
+
+const total = Object.keys(answers).length;
+const progress = Math.round((total / 19) * 100);
+
+const handleSelect = (qId, score) => {
+setAnswers(prev => ({ …prev, [qId]: score }));
+};
+
+const handleSubmit = () => {
+if (total < 19) return;
+setSubmitted(true);
+window.scrollTo({ top: 0, behavior: “smooth” });
+};
+
+const handleReset = () => {
+setAnswers({});
+setSubmitted(false);
+window.scrollTo({ top: 0, behavior: “smooth” });
+};
+
+const totalScore = Object.values(answers).reduce((a, b) => a + b, 0);
+const result = getResult(totalScore);
+
+return (
+<div style={{ fontFamily: “‘Noto Sans KR’, sans-serif”, maxWidth: 680, margin: “0 auto”, padding: “24px 16px”, background: “#f8fafc”, minHeight: “100vh” }}>
+{/* Header */}
+<div style={{ background: “#1e293b”, borderRadius: 16, padding: “24px 28px”, marginBottom: 24, color: “#fff” }}>
+<div style={{ fontSize: 12, color: “#94a3b8”, marginBottom: 6 }}>Horne & Östberg (1976) 기반</div>
+<h1 style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>크로노타입 자가진단</h1>
+<p style={{ margin: “8px 0 0”, fontSize: 13, color: “#cbd5e1” }}>나는 아침형인가, 저녁형인가? — 19문항으로 알아보는 나의 생체시계 유형</p>
+</div>
+
+```
+  {submitted ? (
+    // Result
+    <div>
+      <div style={{ background: "#fff", borderRadius: 16, padding: 28, marginBottom: 20, textAlign: "center", boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
+        <div style={{ fontSize: 56, marginBottom: 12 }}>{result.emoji}</div>
+        <div style={{ fontSize: 13, color: "#64748b", marginBottom: 4 }}>당신의 크로노타입은</div>
+        <div style={{ fontSize: 30, fontWeight: 800, color: result.color, marginBottom: 8 }}>{result.type}</div>
+        <div style={{ display: "inline-block", background: "#f1f5f9", borderRadius: 20, padding: "6px 18px", fontSize: 14, color: "#475569", marginBottom: 16 }}>
+          총점: <strong>{totalScore}점</strong> (범위: {result.range}점)
+        </div>
+        <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.8, margin: 0 }}>{result.desc}</p>
+      </div>
+
+      {/* Score bar */}
+      <div style={{ background: "#fff", borderRadius: 16, padding: 24, marginBottom: 20, boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 12 }}>점수 분포</div>
+        <div style={{ position: "relative", height: 36, borderRadius: 8, overflow: "hidden", background: "linear-gradient(to right, #8b5cf6, #3b82f6, #22c55e, #eab308, #f97316)" }}>
+          <div style={{
+            position: "absolute",
+            left: `${((totalScore - 16) / 70) * 100}%`,
+            top: 0, bottom: 0,
+            width: 3,
+            background: "#fff",
+            boxShadow: "0 0 6px rgba(0,0,0,0.4)",
+            transform: "translateX(-50%)"
+          }} />
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#94a3b8", marginTop: 6 }}>
+          <span>16 (확실한 저녁형)</span>
+          <span>86 (확실한 아침형)</span>
+        </div>
+      </div>
+
+      {/* Type guide */}
+      <div style={{ background: "#fff", borderRadius: 16, padding: 24, marginBottom: 20, boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 14 }}>유형별 점수 기준</div>
+        {[
+          { label: "확실한 아침형", range: "70~86", color: "#f97316" },
+          { label: "보통 아침형", range: "59~69", color: "#eab308" },
+          { label: "중간형", range: "42~58", color: "#22c55e" },
+          { label: "보통 저녁형", range: "31~41", color: "#3b82f6" },
+          { label: "확실한 저녁형", range: "16~30", color: "#8b5cf6" },
+        ].map(t => (
+          <div key={t.label} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: t.color, flexShrink: 0 }} />
+            <span style={{ fontSize: 13, color: "#334155", flex: 1 }}>{t.label}</span>
+            <span style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>{t.range}점</span>
+          </div>
+        ))}
+        <div style={{ marginTop: 14, fontSize: 11, color: "#94a3b8" }}>출처: Horne JA, Östberg O. (1976). International Journal of Chronobiology, 4(2), 97–110.</div>
+      </div>
+
+      <button onClick={handleReset} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "none", background: "#1e293b", color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>
+        다시 진단하기
+      </button>
+    </div>
+  ) : (
+    // Questions
+    <div>
+      {/* Progress */}
+      <div style={{ background: "#fff", borderRadius: 12, padding: "14px 18px", marginBottom: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#475569", marginBottom: 8 }}>
+          <span>진행률</span>
+          <span><strong>{total}</strong> / 19문항</span>
+        </div>
+        <div style={{ height: 8, background: "#e2e8f0", borderRadius: 4, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${progress}%`, background: "#1e293b", borderRadius: 4, transition: "width 0.3s" }} />
+        </div>
+      </div>
+
+      {questions.map((q) => (
+        <div key={q.id} style={{ background: "#fff", borderRadius: 14, padding: "20px 20px", marginBottom: 14, boxShadow: "0 2px 8px rgba(0,0,0,0.05)", border: answers[q.id] !== undefined ? "2px solid #1e293b" : "2px solid transparent" }}>
+          <p style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 600, color: "#1e293b", lineHeight: 1.6 }}>{q.text}</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {q.options.map((opt, i) => (
+              <button
+                key={i}
+                onClick={() => handleSelect(q.id, opt.score)}
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  border: "1.5px solid",
+                  borderColor: answers[q.id] === opt.score ? "#1e293b" : "#e2e8f0",
+                  background: answers[q.id] === opt.score ? "#1e293b" : "#f8fafc",
+                  color: answers[q.id] === opt.score ? "#fff" : "#334155",
+                  fontSize: 13,
+                  textAlign: "left",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  fontWeight: answers[q.id] === opt.score ? 600 : 400,
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <button
+        onClick={handleSubmit}
+        disabled={total < 19}
+        style={{
+          width: "100%", padding: "15px", borderRadius: 12, border: "none",
+          background: total === 19 ? "#1e293b" : "#cbd5e1",
+          color: total === 19 ? "#fff" : "#94a3b8",
+          fontSize: 15, fontWeight: 700, cursor: total === 19 ? "pointer" : "not-allowed",
+          marginTop: 8,
+        }}
+      >
+        {total < 19 ? `${19 - total}문항 남았습니다` : "결과 확인하기 →"}
+      </button>
+    </div>
+  )}
+</div>
+```
+
+);
+}
